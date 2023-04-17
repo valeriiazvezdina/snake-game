@@ -5,13 +5,8 @@
 
 int main(int argc, char *argv[])
 {
-    int *p;
-    int i;
-    p = &i;
-    *p = 10;
-
     QApplication app(argc, argv);
-    Snake window; // instance classu
-    window.show(); // zobrazení instancí
-    return app.exec(); // realizace programu
+    Snake window;
+    window.show();
+    return app.exec();
 }
