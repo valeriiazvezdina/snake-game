@@ -3,8 +3,8 @@
 
 #include <QWidget>
 #include <QVector>
-#include <QPoint> // struktura umožňující ukládat data ve dvojicích jako souřadnice X a Y, což usnadní praci
-#include <QKeyEvent> // pro praci se stiskutím klávesnice
+#include <QPoint>
+#include <QKeyEvent>
 
 class Snake : public QWidget
 {
@@ -14,47 +14,44 @@ public:
     Snake(QWidget *parent = nullptr);
     ~Snake();
 
-protected: // sloty
-    void timerEvent(QTimerEvent *) override; // slot pro intervalový timer
-    void keyPressEvent(QKeyEvent *) override; //  zpracovávání dotyku klávesnice
-    void paintEvent(QPaintEvent *event) override; // kreslení
+protected: // slots
+    void timerEvent(QTimerEvent *) override; // slot for timer
+    void keyPressEvent(QKeyEvent *) override; //  keybord triggers
+    void paintEvent(QPaintEvent *event) override;
 
 private:
-    // static protože nejsou zavázány na jednotkách classu a fungují stejně pro celý class
 
-    // rozměry jednotlivých částí hada
+    // size of snake's patrs
     static const int DOT_WIDTH = 20;
     static const int DOT_HEIGHT = 20;
 
-    // rozměry pole
+    // size of the game field
     static const int FIELD_WIDTH = 20;
     static const int FIELD_HEIGHT = 20;
 
-    // velikost hada, tj. množství částí hada na zacátku hry
+    // size of the snake (number of parts)
     int N = 3;
 
     // timer
-    static const int DELAY = 150; // interval opakování
+    static const int DELAY = 150; // interval for repeating
     int timerID;
 
-    // stav hry: pokud se nenarazime do zdi, stav je true, jinak je false
     bool inGame;
 
-    // možné směry
+    // directions
     enum Directions { LEFT, RIGHT, UP, DOWN };
 
-    // směr hada
+    // direction of the snake
     Directions dir;
 
-    // pozice jablka
+    // place of the apple
     QPoint apple;
 
-    // zde bude uložena veškerá informace ohledně pozic jednotlivých částí hadu
+    // parts of the snake
     QVector<QPoint> dots;
 
     int score = 0;
 
-    // metody
     void doDrawing(); // funkce kreslení
     void localApple(); // funkce náhodné pozice jablka
     void initGame(); // funkce inicializace hry
