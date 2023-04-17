@@ -1,21 +1,20 @@
 ﻿#include "snake.h"
 
 #include <QApplication>
-#include <QPainter> // umožní praci s kreslením
+#include <QPainter> // for using keybord
 #include <QTime> // práce s časem
-#include <QRandomGenerator> // generace náhodných čísel
-#include <QMessageBox> // okna informace
+#include <QRandomGenerator> // generation random numbers
+#include <QMessageBox> // information window
 
 Snake::Snake(QWidget *parent)
     : QWidget(parent)
 {
-    // nastavení backgroundu hry
+    // set up the background
     setStyleSheet("background-color:black;");
-    // nastavujeme velikost pole
+    // set up the size
     resize(DOT_WIDTH * FIELD_WIDTH, DOT_HEIGHT * FIELD_HEIGHT);
-    // název okna
+    // the name of the window
     setWindowTitle("Snake game");
-    // inicializace hry a základních metod
     initGame();
 }
 
@@ -23,20 +22,19 @@ Snake::~Snake() { }
 
 void Snake::timerEvent(QTimerEvent *event)
 {
-    Q_UNUSED(event); // tuto proměnnu event nepouzíváme
+    Q_UNUSED(event);
 
-    if (inGame) { // pokud had je "aktivní" vyplňujeme následující akce
+    if (inGame) {
         checkApple();
         move();
         checkField();
     }
-    this->repaint(); // překreslení po provedení akcí
-}
+    this->repaint();
 
 void Snake::keyPressEvent(QKeyEvent *event)
 {
     int key = event->key();
-    // podle dotyku měníme směr hadu
+    // change the direction
     if (key == Qt::Key_Left && dir != RIGHT) {
         dir = LEFT;
     }
@@ -53,27 +51,26 @@ void Snake::keyPressEvent(QKeyEvent *event)
 
 void Snake::paintEvent(QPaintEvent *event)
 {
-    Q_UNUSED(event); // tato proměnna není nutná a nebudeme ji používat
-    doDrawing(); // přetížení standardní funkce paintEvent
+    Q_UNUSED(event);
+    doDrawing(); // overloading the standard function of paintEvent
 }
 
 void Snake::initGame()
 {
-    // základní vlastnosti hadu
+    // properties of snake
     inGame = true;
     dir = RIGHT;
-    dots.resize(N); // původně had má tři části, kde hlava je nulový index
+    dots.resize(N);
 
-    // inicializace elementů hadu v centru pole
+    // inicialization the snake at the middle 
     for (int i = 0; i < dots.size(); ++i) {
         dots[i].rx() = ((FIELD_WIDTH - 1) / 2) - i;
         dots[i].ry() = (FIELD_HEIGHT - 1) / 2;
     }
 
-    // nastavení pozici jablka
     localApple();
 
-    // timer, který bude vyvolávát určité funkce po první inicializace hry a po určitému intervalu
+    // timer for repeating actions
     timerID = startTimer(DELAY);
 }
 
@@ -82,7 +79,7 @@ void Snake::doDrawing()
     QPainter qp(this);
 
     if (inGame) {
-        // kreslení jablka
+        // paiting the apple
         qp.setBrush(Qt::yellow);
         qp.drawEllipse(apple.x() * DOT_WIDTH, apple.y() * DOT_HEIGHT, DOT_WIDTH, DOT_HEIGHT);
 
@@ -114,12 +111,12 @@ void Snake::localApple()
 
 void Snake::move()
 {
-    // přemíštění poslední části hada na místo předposlední části, tedy celý had posouvá o jeden prvek v určitém směru
+    // replacement of the last part of the snake with the part before the last one => whole snake is moving on the 1 element
     for (int i = dots.size()-1; i > 0; --i) {
         dots[i] = dots[i-1];
     }
 
-    // pohyb hlavy hada
+    // move of the snake head 
     switch (dir) {
     case LEFT: {
         dots[0].rx() -= 1;
@@ -142,7 +139,7 @@ void Snake::move()
 
 void Snake::checkField()
 {
-    // kontrola, nenarazil-li had sam do sebe, což ale je možný pouze, když N je větší než 4
+    // control for snake's cannibalism
     if (dots.size() > 4) {
         for (int i = 1; i < dots.size(); ++i) {
             if (dots[0] == dots[i]) {
@@ -151,7 +148,7 @@ void Snake::checkField()
         }
     }
 
-    // kontrola hranici pole
+    // control for the field's size
     if (dots[0].x() >= FIELD_WIDTH) {
         inGame = false;
     }
@@ -165,7 +162,7 @@ void Snake::checkField()
         inGame = false;
     }
 
-    // zastavení hry, pokud had nepřošel kontrolu
+    // game over
     if (!inGame) {
         killTimer(timerID );
     }
@@ -176,15 +173,13 @@ void Snake::checkApple()
     if (apple == dots[0]) {
         dots.push_back(QPoint(0, 0));
         score++;
-        /* není rozdíl jaký dávat souřadnice, protože ve funkci move měníme poslední element
-        pole na předposlední, tedy jediné, co je důležitý, je zvětšení pole o nový prvek */
         localApple(); // znovu nastavíme nové jablko
     }
 }
 
 void Snake::gameOver()
 {
-    // okno oznamující, že hra skončila
+    // game over window
     QMessageBox mb1;
     mb1.setText("game over");
     mb1.exec();
