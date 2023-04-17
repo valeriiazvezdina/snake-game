@@ -2,7 +2,7 @@
 
 #include <QApplication>
 #include <QPainter> // for using keybord
-#include <QTime> // práce s časem
+#include <QTime> // for timer
 #include <QRandomGenerator> // generation random numbers
 #include <QMessageBox> // information window
 
